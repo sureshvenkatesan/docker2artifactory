@@ -105,7 +105,7 @@ class ArtifactoryDockerAccess(ArtifactoryBaseAccess):
     def upload_layer(self, image, tag, layer, file):
         self.log.debug("Uploading layer %s for %s/%s using file at %s" % (layer, image, tag, file))
         #path_fragment = "/%s/%s/_uploads/sha256__%s;sha256=%s" % (self.repo, image, layer, layer)
-        path_fragment = "/%s/%s/%s/sha256__%s;sha256=%s" % (self.repo, image, tag, layer, layer)
+        path_fragment = "/artifactory/%s/%s/%s/sha256__%s;sha256=%s" % (self.repo, image, tag, layer, layer)
         stat = self.deployFileByStream(path=path_fragment, file_path=file)
         return stat == 201
 
@@ -131,12 +131,12 @@ class ArtifactoryDockerAccess(ArtifactoryBaseAccess):
     '''
     def is_valid_docker_repo(self):
         self.log.info("Checking the Artifatory Docker repo '%s'" % self.repo)
-        msg = self.get_call_wrapper("/api/repositories/%s" % self.repo)
+        msg = self.get_call_wrapper("/artifactory/api/repositories/%s" % self.repo)
         if msg and 'packageType' in msg and msg['packageType'] == 'docker':
             if 'dockerApiVersion' in msg and msg['dockerApiVersion'] == "V2":
                 return True
         # JCR does not support the api/repositories call, so try a different way to verify
-        msg = self.get_call_wrapper("/api/docker/%s/v2/_catalog" % self.repo)
+        msg = self.get_call_wrapper("/artifactory/api/docker/%s/v2/_catalog" % self.repo)
         if msg and 'repositories' in msg:
             return True
         return False
@@ -162,7 +162,7 @@ class ArtifactoryDockerAccess(ArtifactoryBaseAccess):
         Assembles a path to deploy a manifest to
     '''
     def __assemble_manifest_path(self, image, tag):
-        path = "/api/docker/%s/v2/%s/manifests/%s" % (self.repo, image, tag)
+        path = "/artifactory/api/docker/%s/v2/%s/manifests/%s" % (self.repo, image, tag)
         return path
 
     '''

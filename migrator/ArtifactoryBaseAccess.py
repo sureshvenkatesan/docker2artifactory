@@ -56,7 +56,7 @@ class ArtifactoryBaseAccess(HTTPAccess):
     '''
     def __get_version(self):
         self.log.info("Checking the Artifatory version")
-        msg = self.get_call_wrapper("/api/system/version")
+        msg = self.get_call_wrapper("/artifactory/api/system/version")
         if msg and 'version' in msg:
             self.log.info("Found version: " + msg['version'])
             return msg['version']
